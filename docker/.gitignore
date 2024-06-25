@@ -1,0 +1,4 @@
+/data/nginx
+/data/mysql
+/.docker-sync
+.env
