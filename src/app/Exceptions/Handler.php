@@ -4,6 +4,9 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
+use Throwable;
+
 
 class Handler extends ExceptionHandler
 {
@@ -34,8 +37,11 @@ class Handler extends ExceptionHandler
      * @param  \Exception  $exception
      * @return void
      */
-    public function report(Exception $exception)
+    public function report(Throwable $exception)
     {
+        // 添加日志记录
+        Log::error($exception);
+
         parent::report($exception);
     }
 
