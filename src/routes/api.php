@@ -27,7 +27,9 @@ Route::prefix('v2')->group(function () {
         Route::post('register', 'Auth\AuthController@register');
         Route::post('logout', 'Auth\AuthController@logout');
     });
-    Route::apiResource('contact', 'Contact\ContactController')->except('destroy');
-    Route::delete('contact', 'Contact\ContactController@destroy');
-    Route::apiResource('contact-list', 'Contact\ContactListController');
+    Route::middleware(['auth:api'])->prefix('admin')->group(function () {
+        Route::apiResource('contact', 'Contact\ContactController')->except('destroy');
+        Route::delete('contact', 'Contact\ContactController@destroy');
+        Route::apiResource('contact-list', 'Contact\ContactListController')->only('index', 'show');
+    });
 });
