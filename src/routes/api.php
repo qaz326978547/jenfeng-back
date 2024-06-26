@@ -13,7 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get('ping', function () {
+    return response()->json(['message' => 'Pong!']);
+});
+
 Route::prefix('v2')->group(function () {
+    Route::get('ping', function () {
+        return response()->json(['message' => 'Pong!']);
+    });
+
     Route::prefix('auth')->group(function () {
         Route::post('login', 'Auth\AuthController@login');
         Route::post('register', 'Auth\AuthController@register');
