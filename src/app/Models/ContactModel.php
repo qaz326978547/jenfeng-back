@@ -26,6 +26,6 @@ class ContactModel extends Model
 
     public function contactList()
     {
-        return $this->hasOne(ContactListModel::class, 'cid');
+        return $this->hasMany(ContactListModel::class, 'cid');
     }
 }

@@ -18,18 +18,20 @@ Route::get('ping', function () {
 });
 
 Route::prefix('v2')->group(function () {
-    Route::get('ping', function () {
-        return response()->json(['message' => 'Pong!']);
-    });
 
+    Route::apiResource('contact-class', 'Contact\ContactClassController')->only('index');
+    Route::apiResource('contact-quest', 'Contact\ContactQuestController')->only('index');
+    Route::apiResource('contact', 'Contact\ContactController')->only('store');
+    Route::apiResource('faq', 'Contact\FAQController')->only('index');
     Route::prefix('auth')->group(function () {
         Route::post('login', 'Auth\AuthController@login');
         Route::post('register', 'Auth\AuthController@register');
         Route::post('logout', 'Auth\AuthController@logout');
     });
     Route::middleware(['auth:api'])->prefix('admin')->group(function () {
-        Route::apiResource('contact', 'Contact\ContactController')->except('destroy');
+        Route::apiResource('contact', 'Contact\ContactController')->except('destroy', 'store');
         Route::delete('contact', 'Contact\ContactController@destroy');
         Route::apiResource('contact-list', 'Contact\ContactListController')->only('index', 'show');
+        Route::apiResource('contact-class', 'Contact\ContactClassController')->except('show,index');
     });
 });

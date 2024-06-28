@@ -8,7 +8,8 @@ use App\Models\ContactModel;
 use App\Http\Requests\CreateContactRequest;
 use Symfony\Component\HttpFoundation\Response; //使用於狀態碼
 use Illuminate\Support\Facades\DB;
-
+use App\Mail\SignedUpMail;
+use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
 {
@@ -22,12 +23,12 @@ class ContactController extends Controller
 
     public function index()
     {
-        $contact = ContactModel::paginate(10);
+        $contact = ContactModel::orderBy('created_at', 'desc')->paginate(10);
         return response()->json($contact);
     }
 
     /**
-     * 新增聯絡資料
+     * 新增報名資料
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
@@ -51,13 +52,17 @@ class ContactController extends Controller
             'from' => $data['from'],
             'suggest_name' => $data['suggest_name'],
         ]);
-        $contact->contactList()->create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'job' => $data['job'],
-            'cel' => $data['cel'],
-            'cid' => $contact->id,
-        ]);
+        foreach ($data['contactList'] as $item) {
+            $contact->contactList()->create([
+                'name' => $item['name'],
+                'email' => $item['email'],
+                'job' => $item['job'],
+                'cel' => $item['cel'],
+                'cid' => $contact->id,
+            ]);
+        }
+        //寄送信件
+        Mail::to(env('RECIPIENT_EMAIL'))->send(new SignedUpMail($data['company'], $data['class'], $data['num'], $data['tel']));
         return response()->json([
             'message' => '新增成功',
             'data' => $contact,
