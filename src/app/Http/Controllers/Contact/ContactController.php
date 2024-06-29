@@ -46,11 +46,11 @@ class ContactController extends Controller
             'num' => $data['num'],
             'last5' => $data['last5'],
             'ticket' => $data['ticket'],
-            'ticket_name' => $data['ticket_name'],
-            'ticket_no' => $data['ticket_no'],
+            'ticket_name' => $data['ticket_name'] ?? null,
+            'ticket_no' => $data['ticket_no'] ?? null,
             'ticket_address' => $data['ticket_address'],
-            'from' => $data['from'],
-            'suggest_name' => $data['suggest_name'],
+            'from' => $data['from'] ?? null,
+            'suggest_name' => $data['suggest_name'] ?? null,
         ]);
         foreach ($data['contactList'] as $item) {
             $contact->contactList()->create([
