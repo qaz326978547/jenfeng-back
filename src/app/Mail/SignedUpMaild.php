@@ -12,6 +12,7 @@ class SignedUpMail extends Mailable
     use Queueable, SerializesModels;
 
     public $company;
+
     public $class;
     public $num;
     public $tel;
