@@ -38,6 +38,7 @@ class ContactController extends Controller
     public function store(CreateContactRequest $request)
     {
         $data = $request->validated();
+
         $contact = ContactModel::create([
             'class' => $data['class'],
             'quest' => $data['quest'],
