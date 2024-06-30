@@ -101,7 +101,10 @@ class ContactController extends Controller
         $data = $request->validated();
         $contact = ContactModel::find($id);
         if ($contact) {
-            $contact->update($data);
+            $contact->update([
+                'name' => $data['name'],
+                'no' => $data['no'],
+            ]);
             return response()->json([
                 'message' => '更新成功',
                 'data' => $contact

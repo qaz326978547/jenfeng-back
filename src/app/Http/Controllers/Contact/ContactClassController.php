@@ -6,17 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactClassModel;
 use Symfony\Component\HttpFoundation\Response; //使用於狀態碼
 use App\Http\Requests\CreateContactClassRequest;
+use Illuminate\Http\Request;
+
+
 
 class ContactClassController extends Controller
 {
     /*
-    * 取得所有報名資料
+    * 取得所有課程資料
     *
     * @return \Illuminate\Http\Response
     */
     public function index()
     {
-        $contact = ContactClassModel::orderBy('no', 'desc')->where('del', '=', 0)->paginate(10);
+        $contact = ContactClassModel::orderBy('no', 'desc')->where('del', '=', 0)->get();
         return response()->json($contact);
     }
 
@@ -40,18 +43,39 @@ class ContactClassController extends Controller
         ], Response::HTTP_CREATED);
     }
 
+    /**
+     * 取得指定課程資料
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $contact = ContactClassModel::where('del', '=', 0)->find($id);
+        if ($contact) {
+            return response()->json($contact);
+        } else {
+            return response()->json([
+                'message' => '找不到資料'
+            ], Response::HTTP_NOT_FOUND);
+        }
+    }
+
+
 
     /**
-     * 更新報名資料
+     * 更新課程資料
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
     public function update(CreateContactClassRequest $request, $id)
     {
         $data = $request->validated();
-        $contact = ContactClassModel::find($id);
+        $contact = ContactClassModel::where('del', 0)->find($id);
+
         if ($contact) {
             $contact->update($data);
             return response()->json([
@@ -64,25 +88,42 @@ class ContactClassController extends Controller
             ], Response::HTTP_NOT_FOUND);
         }
     }
-
     /**
-     * 刪除報名資料
+     * 刪除課程資料
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request)
     {
-        $contact = ContactClassModel::find($id);
-        if ($contact) {
-            $contact->delete();
+        $ids = $request->input('ids');
+
+        if (is_array($ids)) {
+            $existingIds = ContactClassModel::whereIn('id', $ids)->pluck('id')->all();
+            $nonExistingIds = array_diff($ids, $existingIds);
+
+            if (!empty($nonExistingIds)) {
+                return response()->json([
+                    'message' => '以下的 id 不存在: ' . implode(', ', $nonExistingIds)
+                ], Response::HTTP_NOT_FOUND);
+            }
+
+            ContactClassModel::whereIn('id', $ids)->delete();
             return response()->json([
                 'message' => '刪除成功'
             ], Response::HTTP_OK);
         } else {
-            return response()->json([
-                'message' => '找不到資料'
-            ], Response::HTTP_NOT_FOUND);
+            $contact = ContactClassModel::find($ids);
+            if ($contact) {
+                $contact->delete();
+                return response()->json([
+                    'message' => '刪除成功'
+                ], Response::HTTP_OK);
+            } else {
+                return response()->json([
+                    'message' => '找不到 id: ' . $ids
+                ], Response::HTTP_NOT_FOUND);
+            }
         }
     }
 }

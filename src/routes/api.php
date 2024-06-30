@@ -13,9 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('ping', function () {
-    return response()->json(['message' => 'Pong!']);
-});
+Route::get('/', 'WelcomeController@index');
 
 Route::prefix('v2')->group(function () {
 
@@ -32,6 +30,7 @@ Route::prefix('v2')->group(function () {
         Route::apiResource('contact', 'Contact\ContactController')->except('destroy', 'store');
         Route::delete('contact', 'Contact\ContactController@destroy');
         Route::apiResource('contact-list', 'Contact\ContactListController')->only('index', 'show');
-        Route::apiResource('contact-class', 'Contact\ContactClassController')->except('show,index');
+        Route::apiResource('contact-class', 'Contact\ContactClassController')->except('destroy');
+        Route::delete('contact-class', 'Contact\ContactClassController@destroy');
     });
 });
