@@ -46,25 +46,30 @@ class ContactController extends Controller
             'company' => $data['company'],
             'tel' => $data['tel'],
             'num' => $data['num'],
-            'last5' => $data['last5'],
-            'ticket' => $data['ticket'],
+            'last5' => $data['last5'] ?? null,
+            'ticket' => $data['ticket'] ?? null,
             'ticket_name' => $data['ticket_name'] ?? null,
             'ticket_no' => $data['ticket_no'] ?? null,
-            'ticket_address' => $data['ticket_address'],
+            'ticket_address' => $data['ticket_address'] ?? null,
             'from' => $data['from'] ?? null,
             'suggest_name' => $data['suggest_name'] ?? null,
         ]);
+
         foreach ($data['contactList'] as $item) {
-            $contact->contactList()->create([
-                'name' => $item['name'],
-                'email' => $item['email'],
-                'job' => $item['job'],
-                'cel' => $item['cel'],
-                'cid' => $contact->id,
-            ]);
+            if (is_array($item) && array_key_exists('email', $item)) {
+                $contact->contactList()->create([
+                    'name' => $item['name'],
+                    'email' => $item['email'],
+                    'job' => $item['job'],
+                    'cel' => $item['cel'],
+                    'cid' => $contact->id,
+                ]);
+            }
         }
+
         //寄送信件
-        Mail::to(env('RECIPIENT_EMAIL'))->send(new SignedUpMail($data['company'], $data['class'], $data['num'], $data['tel']));
+        Mail::to('a0930532215@gmail.com')->send(new SignedUpMail($data['company'], $data['class'], $data['num'], $data['tel']));
+
         return response()->json([
             'message' => '新增成功',
             'data' => $contact,

@@ -40,9 +40,8 @@ class CreateContactRequest extends APIRequest
             'contactList' => 'required|array',
             'contactList.*.name' => 'required|string',
             'contactList.*.email' => 'required|email',
-            'contactList.*.job' => 'required|string',
-            'contactList.*.cel' => 'required|string|size:10',
-
+            'contactList.*.job' => 'nullable|string',
+            'contactList.*.cel' => 'required|string|max:10',
             // contact_list
             // 'cid' => 'required|integer',
         ];
@@ -74,7 +73,8 @@ class CreateContactRequest extends APIRequest
             'contactList.*.email.email' => '信箱格式錯誤',
             'contactList.*.job.required' => '請輸入職稱',
             'contactList.*.cel.required' => '請輸入手機',
-            'contactList.*.cel.size' => '手機格式錯誤',
+            // 'contactList.*.cel.size' => '手機格式錯誤',
+            'contactList.*.cel.max' => '手機格式錯誤',
             // 'cid.required' => '請輸入cid',
             // 'cid.integer' => 'cid格式錯誤',
         ];
