@@ -9,6 +9,7 @@ use App\Http\Requests\CreateContactRequest;
 use Symfony\Component\HttpFoundation\Response; //使用於狀態碼
 use Illuminate\Support\Facades\DB;
 use App\Mail\SignedUpMail;
+use App\Models\ContactListModel;
 use Illuminate\Support\Facades\Mail;
 
 class ContactController extends Controller
@@ -153,5 +154,12 @@ class ContactController extends Controller
                 ], Response::HTTP_NOT_FOUND);
             }
         }
+    }
+    //搜尋
+    public function searchCompany(Request $request)
+    {
+        $search = $request->input('company');
+        $contact = ContactModel::where('company', 'like', '%' . $search . '%')->paginate(10);
+        return response()->json($contact);
     }
 }

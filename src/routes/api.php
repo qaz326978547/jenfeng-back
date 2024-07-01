@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'WelcomeController@index');
+// Route::get('/', 'WelcomeController@index');
 
 Route::prefix('v2')->group(function () {
 
@@ -32,5 +32,6 @@ Route::prefix('v2')->group(function () {
         Route::apiResource('contact-list', 'Contact\ContactListController')->only('index', 'show');
         Route::apiResource('contact-class', 'Contact\ContactClassController')->except('destroy', 'index');
         Route::delete('contact-class', 'Contact\ContactClassController@destroy');
+        Route::get('contact/search/search-company', 'Contact\ContactController@searchCompany');
     });
 });
