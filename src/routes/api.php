@@ -30,7 +30,7 @@ Route::prefix('v2')->group(function () {
         Route::apiResource('contact', 'Contact\ContactController')->except('destroy', 'store');
         Route::delete('contact', 'Contact\ContactController@destroy');
         Route::apiResource('contact-list', 'Contact\ContactListController')->only('index', 'show');
-        Route::apiResource('contact-class', 'Contact\ContactClassController')->except('destroy');
+        Route::apiResource('contact-class', 'Contact\ContactClassController')->except('destroy', 'index');
         Route::delete('contact-class', 'Contact\ContactClassController@destroy');
     });
 });
