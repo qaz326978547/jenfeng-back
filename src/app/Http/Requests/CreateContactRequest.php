@@ -29,11 +29,11 @@ class CreateContactRequest extends APIRequest
             'company' => 'required|string', //公司名稱
             'tel' => 'required|string|max:10', //電話
             'num' => 'required|string', //報名人數
-            'last5' => 'required|string|max:5', //匯款帳號最後五碼
-            'ticket' => 'required|in:2,3', //發票是否開立公司抬頭(三聯式發票) 發票種類
+            // 'last5' => 'required|string|max:5', //匯款帳號最後五碼
+            // 'ticket' => 'required|in:2,3', //發票是否開立公司抬頭(三聯式發票) 發票種類
             // 'ticket_name' => 'required|string', //發票抬頭
             // 'ticket_no' => 'required|string', //統一編號
-            'ticket_address' => 'required|string', //發票地址
+            // 'ticket_address' => 'required|string', //發票地址
             // 'from' => 'required|string', //得知講座管道
             // 'suggest_name' => 'required|string', //推薦人姓名
             // contact_list
@@ -57,13 +57,13 @@ class CreateContactRequest extends APIRequest
             'tel.required' => '請輸入電話',
             'tel.max' => '電話格式錯誤',
             'num.required' => '請輸入報名人數',
-            'last5.required' => '請輸入匯款帳號最後五碼',
-            'last5.max' => '匯款帳號最後五碼格式錯誤',
-            'ticket.required' => '請選擇發票是否開立公司抬頭(三聯式發票) 發票種類',
-            'ticket.in' => '發票是否開立公司抬頭(三聯式發票) 發票種類格式錯誤',
+            // 'last5.required' => '請輸入匯款帳號最後五碼',
+            // 'last5.max' => '匯款帳號最後五碼格式錯誤',
+            // 'ticket.required' => '請選擇發票是否開立公司抬頭(三聯式發票) 發票種類',
+            // 'ticket.in' => '發票是否開立公司抬頭(三聯式發票) 發票種類格式錯誤',
             // 'ticket_name.required' => '請輸入發票抬頭',
             // 'ticket_no.required' => '請輸入統一編號',
-            'ticket_address.required' => '請輸入發票地址',
+            // 'ticket_address.required' => '請輸入發票地址',
             // 'from.required' => '請輸入得知講座管道',
             // 'suggest_name.required' => '請輸入推薦人姓名',
             // contact_list
