@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Route;
 // Route::get('/', 'WelcomeController@index');
 
 Route::prefix('v2')->group(function () {
-
+    Route::get('seo', 'SeoController@index');
     Route::apiResource('contact-class', 'Contact\ContactClassController')->only('index');
     Route::apiResource('contact-quest', 'Contact\ContactQuestController')->only('index');
     Route::apiResource('contact', 'Contact\ContactController')->only('store');
