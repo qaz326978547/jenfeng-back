@@ -26,7 +26,7 @@ class CreateContactListRequest extends FormRequest
         return [
             'name' => 'required|string',
             'cel' => 'required|string|size:10',
-            'job' => 'required|string',
+            // 'job' => 'required|string',
             'email' => 'required|string|email',
             'cid' => 'required|integer',
         ];
@@ -37,7 +37,7 @@ class CreateContactListRequest extends FormRequest
         return [
             'name.required' => '請輸入姓名',
             'cel.required' => '請輸入手機',
-            'job.required' => '請輸入職稱',
+            // 'job.required' => '請輸入職稱',
             'email.required' => '請輸入信箱',
             'email.email' => '信箱格式錯誤',
             'cid.required' => '請輸入cid',

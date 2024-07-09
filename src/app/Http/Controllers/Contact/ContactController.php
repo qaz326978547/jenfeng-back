@@ -60,7 +60,7 @@ class ContactController extends Controller
                 $contact->contactList()->create([
                     'name' => $item['name'],
                     'email' => $item['email'],
-                    'job' => $item['job'],
+                    'job' => $item['job'] ?? null,
                     'cel' => $item['cel'],
                     'cid' => $contact->id,
                 ]);
