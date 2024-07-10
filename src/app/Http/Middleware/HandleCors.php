@@ -15,7 +15,7 @@ class HandleCors
      */
     public function handle($request, Closure $next)
     {
-        $allowedOrigins = ['http://localhost:3000', 'https://laborservice5690.com'];
+        $allowedOrigins = ['http://localhost:3000', 'https://laborservice5690.com', 'https://www.facebook.com'];
         $origin = $request->headers->get('Origin');
 
         if ($request->getMethod() === "OPTIONS") {
