@@ -1,0 +1,4 @@
+{
+    "build_command": "composer install --no-dev && npm install && npm run prod",
+    "start_command": "php artisan migrate --force && php artisan queue:work redis --sleep=3 --tries=3 & _startup"
+}

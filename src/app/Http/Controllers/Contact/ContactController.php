@@ -68,7 +68,7 @@ class ContactController extends Controller
         }
 
         //寄送信件
-        Mail::to('a0930532215@gmail.com')->send(new SignedUpMail($data['company'], $data['class'], $data['num'], $data['tel']));
+        Mail::to('a0930532215@gmail.com')->queue(new SignedUpMail($data['company'], $data['class'], $data['num'], $data['tel']));
 
         return response()->json([
             'message' => '新增成功',
