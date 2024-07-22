@@ -24,26 +24,23 @@ class CreateContactRequest extends APIRequest
     public function rules()
     {
         return [
-            'class' => 'required|string', //報名課程
-            'quest' => 'required|string', //主要問題
-            'company' => 'required|string', //公司名稱
-            'tel' => 'required|string|max:10', //電話
-            'num' => 'required|string', //報名人數
-            // 'last5' => 'required|string|max:5', //匯款帳號最後五碼
-            // 'ticket' => 'required|in:2,3', //發票是否開立公司抬頭(三聯式發票) 發票種類
-            // 'ticket_name' => 'required|string', //發票抬頭
-            // 'ticket_no' => 'required|string', //統一編號
-            // 'ticket_address' => 'required|string', //發票地址
-            // 'from' => 'required|string', //得知講座管道
-            // 'suggest_name' => 'required|string', //推薦人姓名
-            // contact_list
+            'class' => 'required|string', // 報名課程
+            'quest' => 'required|string', // 主要問題
+            'company' => 'required|string', // 公司名稱
+            'tel' => 'required|string|max:10', // 電話
+            'num' => 'required|string', // 報名人數
+            'last5' => 'nullable|string|max:5', // 匯款帳號最後五碼
+            'ticket' => 'nullable|in:2,3', // 發票種類
+            'ticket_name' => 'nullable|string', // 發票抬頭
+            'ticket_no' => 'nullable|string', // 統一編號
+            'ticket_address' => 'nullable|string', // 發票地址
+            'from' => 'nullable|string', // 得知講座管道
+            'suggest_name' => 'nullable|string', // 推薦人姓名
             'contactList' => 'required|array',
             'contactList.*.name' => 'required|string',
             'contactList.*.email' => 'required|email',
             'contactList.*.job' => 'nullable|string',
             'contactList.*.cel' => 'required|string|max:10',
-            // contact_list
-            // 'cid' => 'required|integer',
         ];
     }
 
