@@ -23,6 +23,8 @@ RUN mkdir -p /src/storage/logs /src/bootstrap/cache \
 RUN composer install --optimize-autoloader --no-dev \
     && if [ -f package.json ]; then npm install; fi
 
+RUN php-fpm -t || true
+
 # ⬇⬇ Debug 檢查位置（可刪/可留）
 RUN ls -l /src/storage && ls -l /src/storage/logs && ls -l /src/bootstrap && ls -l /src/bootstrap/cache \
     && touch /src/storage/logs/laravel.log \
