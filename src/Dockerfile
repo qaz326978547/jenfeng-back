@@ -3,12 +3,14 @@ LABEL "language"="php"
 LABEL "framework"="laravel"
 WORKDIR /src
 
+# 安裝基本開發工具、php zip 擴充、unzip、node14
 RUN apt-get update \
-    && apt-get install -y curl gnupg2 build-essential git jq python3 \
+    && apt-get install -y curl gnupg2 build-essential git jq python3 unzip \
+    && apt-get install -y libzip-dev \
+    && docker-php-ext-install zip \
     && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
     && apt-get install -y nodejs
 
-# 建立 python 連結到 python3（有的系統 python 指到 python2，這裡強制指向 python3）
 RUN ln -sf /usr/bin/python3 /usr/bin/python
 
 COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
