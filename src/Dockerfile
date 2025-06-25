@@ -18,8 +18,7 @@ COPY . .
 
 RUN composer install --optimize-autoloader --no-dev \
     && if [ -f package.json ]; then npm install; fi \
-    && if [ -f package.json ] && [ -n "$(jq '.scripts.build' package.json)" ]; then npm run build; fi
-
+    # && if [ -f package.json ] && [ -n "$(jq '.scripts.build' package.json)" ]; then npm run build; fi
 EXPOSE 9000
 
 CMD ["php-fpm"]
