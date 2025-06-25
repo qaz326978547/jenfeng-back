@@ -16,12 +16,17 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 COPY . .
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-# 必須於 COPY . . 之後，保證資料夾存在並正確權限
-RUN mkdir -p /src/storage /src/bootstrap/cache \
-    && chown -R www-data:www-data /src/storage /src/bootstrap/cache
+RUN mkdir -p /src/storage/logs /src/bootstrap/cache \
+    && chown -R www-data:www-data /src/storage /src/bootstrap/cache \
+    && chmod -R 777 /src/storage /src/bootstrap/cache
 
 RUN composer install --optimize-autoloader --no-dev \
     && if [ -f package.json ]; then npm install; fi
+
+# ⬇⬇ Debug 檢查位置（可刪/可留）
+RUN ls -l /src/storage && ls -l /src/storage/logs && ls -l /src/bootstrap && ls -l /src/bootstrap/cache \
+    && touch /src/storage/logs/laravel.log \
+    && chmod 777 /src/storage/logs/laravel.log
 
 COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
