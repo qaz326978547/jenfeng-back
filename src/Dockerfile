@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:7.4-fpm
 LABEL "language"="php"
 LABEL "framework"="laravel"
 WORKDIR /src
