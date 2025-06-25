@@ -16,7 +16,7 @@ COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
 COPY . .
 COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-# ⬇⬇⬇ 這裡新增「確保資料夾存在」！此步驟不可省略
+# 必須於 COPY . . 之後，保證資料夾存在並正確權限
 RUN mkdir -p /src/storage /src/bootstrap/cache \
     && chown -R www-data:www-data /src/storage /src/bootstrap/cache
 
@@ -25,6 +25,6 @@ RUN composer install --optimize-autoloader --no-dev \
 
 COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE 80
+EXPOSE 9000
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
