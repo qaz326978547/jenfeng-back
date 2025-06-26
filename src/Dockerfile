@@ -29,8 +29,8 @@ server {
     listen 8080;
     root /var/www/public;
 
-    add_header X-Frame-Options \"SAMEORIGIN\";
-    add_header X-Content-Type-Options \"nosniff\";
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
 
     index index.php index.html;
     charset utf-8;
