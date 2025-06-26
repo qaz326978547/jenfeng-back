@@ -1,37 +1,82 @@
+# syntax=docker/dockerfile:1
+
 FROM php:7.4-fpm
 
 LABEL "language"="php"
 LABEL "framework"="laravel"
-WORKDIR /src
 
-RUN apt-get update \
-    && apt-get install -y nginx curl gnupg2 build-essential git jq python3 unzip libzip-dev supervisor \
-    && docker-php-ext-install zip \
-    && curl -fsSL https://deb.nodesource.com/setup_14.x | bash - \
-    && apt-get install -y nodejs
+ENV APP_ENV=prod
+ENV APP_DEBUG=true
 
-RUN ln -sf /usr/bin/python3 /usr/bin/python
+WORKDIR /var/www
 
-COPY --from=composer:2.7 /usr/bin/composer /usr/bin/composer
-COPY . .
-COPY ./docker/nginx.conf /etc/nginx/conf.d/default.conf
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions && sync
 
-RUN mkdir -p /src/storage/logs /src/bootstrap/cache \
-    && chown -R www-data:www-data /src/storage /src/bootstrap/cache \
-    && chmod -R 777 /src/storage /src/bootstrap/cache
+RUN set -eux \
+    && apt update \
+    && apt install -y cron curl gettext git grep libicu-dev nginx pkg-config unzip \
+    && rm -rf /var/www/html \
+    && curl -fsSL https://deb.nodesource.com/setup_14.x -o nodesource_setup.sh \
+    && bash nodesource_setup.sh \
+    && apt install -y nodejs \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN composer install --optimize-autoloader --no-dev \
-    && if [ -f package.json ]; then npm install; fi
+RUN install-php-extensions @composer apcu bcmath gd intl mysqli opcache pcntl pdo_mysql sysvsem zip
 
-RUN php-fpm -t || true
+RUN cat <<'EOF' > /etc/nginx/sites-enabled/default
+server {
+    listen 8080;
+    root /var/www/public;
 
-# ⬇⬇ Debug 檢查位置（可刪/可留）
-RUN ls -l /src/storage && ls -l /src/storage/logs && ls -l /src/bootstrap && ls -l /src/bootstrap/cache \
-    && touch /src/storage/logs/laravel.log \
-    && chmod 777 /src/storage/logs/laravel.log
+    add_header X-Frame-Options \"SAMEORIGIN\";
+    add_header X-Content-Type-Options \"nosniff\";
 
-COPY ./docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+    index index.php index.html;
+    charset utf-8;
 
-EXPOSE 9000
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
 
-CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.*)$;
+        fastcgi_pass 127.0.0.1:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+        fastcgi_param DOCUMENT_ROOT $realpath_root;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+        fastcgi_hide_header X-Powered-By;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php$is_args$args;
+        gzip_static on;
+    }
+
+    location ~ /\.(?!well-known).* {
+        deny all;
+    }
+
+    error_log /dev/stderr;
+    access_log /dev/stderr;
+}
+EOF
+
+RUN chown -R www-data:www-data /var/www
+COPY --link --chown=www-data:www-data --chmod=755 . /var/www
+RUN mkdir -p /var/www/bootstrap/cache && chown -R www-data:www-data /var/www/bootstrap/cache
+
+USER www-data
+RUN set -eux \
+    && composer install --no-dev --optimize-autoloader --classmap-authoritative \
+    && npm install \
+    && npm run production
+USER root
+
+CMD nginx; php-fpm;
+
+EXPOSE 8080
