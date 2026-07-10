@@ -1,0 +1,12 @@
+{
+  "build": {
+    "root": "nodejs"
+  },
+  "services": {
+    "api": {
+      "build": {
+        "root": "nodejs"
+      }
+    }
+  }
+}
