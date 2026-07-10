@@ -1,12 +1,8 @@
 {
   "build": {
-    "root": "nodejs"
+    "root": ".",
+    "buildCommand": "npm install && npm run build",
+    "outputDirectory": "dist"
   },
-  "services": {
-    "api": {
-      "build": {
-        "root": "nodejs"
-      }
-    }
-  }
+  "serverless": false
 }
