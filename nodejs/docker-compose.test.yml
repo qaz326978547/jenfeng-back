@@ -1,0 +1,16 @@
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+      MYSQL_DATABASE: jinfeng_test
+    ports:
+      - "33061:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 3s
+      retries: 20
+  redis:
+    image: redis:7
+    ports:
+      - "63791:6379"

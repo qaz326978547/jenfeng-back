@@ -1,0 +1,153 @@
+// Prisma schema for the jinfeng backend.
+//
+// This database is SHARED with another (non-Node, non-Laravel) CMS system —
+// SHOW TABLES also returns admin, browse, browse_record, faq_class, page,
+// page_files, page_pics, seo_class, simple_setting, oauth_*. Those belong to
+// that other system and are intentionally NOT modeled here. Only the 7
+// tables this backend actually reads/writes are declared below.
+//
+// relationMode = "prisma": the existing tables use the MyISAM engine, which
+// silently ignores FOREIGN KEY clauses (confirmed via SHOW CREATE TABLE —
+// contact_list has an index on `cid` but no real FK constraint despite a
+// migration that tried to add one). Prisma-level relations avoid assuming a
+// DB constraint that was never actually enforced.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  relationMode = "prisma"
+}
+
+model User {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  name           String   @db.VarChar(255)
+  email          String   @unique(map: "users_email_unique") @db.VarChar(255)
+  password       String   @db.VarChar(255)
+  rememberToken  String?  @map("remember_token") @db.VarChar(100)
+  isAdmin        Boolean  @default(false) @map("is_admin")
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@map("users")
+}
+
+model Contact {
+  id             Int      @id @default(autoincrement())
+  class          String   @db.Text
+  quest          String   @db.Text
+  company        String   @db.VarChar(60)
+  tel            String   @db.VarChar(60)
+  num            String   @db.VarChar(10)
+  last5          String?  @db.VarChar(5)
+  ticket         String?  @default("2") @db.VarChar(5)
+  ticketName     String?  @map("ticket_name") @db.VarChar(30)
+  ticketNo       String?  @map("ticket_no") @db.VarChar(30)
+  ticketAddress  String?  @map("ticket_address") @db.VarChar(60)
+  from           String?  @db.VarChar(120)
+  suggestName    String?  @map("suggest_name") @db.VarChar(30)
+  del            Boolean  @default(false)
+  no             Int      @default(0)
+  createdAt      DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt      DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  contactList    ContactList[]
+
+  @@map("contact")
+}
+
+model ContactClass {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  no        Int      @default(0)
+  del       Boolean  @default(false)
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  @@map("contact_class")
+}
+
+model ContactQuest {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(255)
+  no        Int
+  del       Boolean
+  createdAt DateTime? @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(0)
+
+  @@map("contact_quest")
+}
+
+model ContactList {
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(30)
+  cel       String?  @db.VarChar(60)
+  job       String?  @db.VarChar(60)
+  email     String?  @db.VarChar(60)
+  no        Int      @default(0)
+  cid       Int
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @default(now()) @updatedAt @map("updated_at") @db.Timestamp(0)
+
+  contact   Contact  @relation(fields: [cid], references: [id])
+
+  @@index([cid], map: "contact_list_cid_index")
+  @@map("contact_list")
+}
+
+/// Read-only: this backend only ever performs SELECT (index) queries against
+/// `faq`. The other CMS system on this database owns writes.
+model Faq {
+  id        Int       @id @default(autoincrement())
+  classId   Int       @default(0) @map("class_id")
+  name      String    @db.VarChar(255)
+  date      DateTime? @db.Timestamp(0)
+  pic       String?   @db.VarChar(255)
+  picAlt    String?   @map("pic_alt") @db.VarChar(255)
+  file      String?   @db.VarChar(255)
+  utube     String?   @db.Text
+  sInfo     String?   @map("s_info") @db.Text
+  info      String    @db.Text
+  info2     String?   @db.Text
+  info3     String?   @db.Text
+  info4     String?   @db.Text
+  info5     String?   @db.Text
+  beClick   Int?      @map("be_click")
+  act       Boolean?
+  pHome     Boolean?  @map("p_home")
+  pNew      Boolean?  @map("p_new")
+  pHot      Boolean?  @map("p_hot")
+  pRun      Boolean?  @map("p_run")
+  no        Int
+  del       Boolean?
+  createdAt DateTime? @map("created_at") @db.Timestamp(0)
+  updatedAt DateTime? @map("updated_at") @db.Timestamp(0)
+
+  @@index([classId], map: "upid")
+  @@map("faq")
+}
+
+/// Read-only: this backend only ever performs SELECT (index) queries against
+/// `seo`. The other CMS system on this database owns writes.
+model Seo {
+  id          Int      @id @default(autoincrement())
+  classId     Int?     @map("class_id")
+  relateId    Int      @map("relate_id")
+  tag         String   @db.VarChar(20)
+  name        String   @db.VarChar(150)
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  url         String   @db.VarChar(255)
+  type        String   @db.VarChar(255)
+  keyword     String   @db.VarChar(255)
+  pic         String   @db.VarChar(120)
+  picAlt      String   @map("pic_alt") @db.VarChar(255)
+  del         Boolean
+  createdAt   DateTime? @map("created_at") @db.Timestamp(0)
+  updatedAt   DateTime? @map("updated_at") @db.Timestamp(0)
+
+  @@index([classId], map: "upid")
+  @@map("seo")
+}
