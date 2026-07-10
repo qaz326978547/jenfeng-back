@@ -123,7 +123,7 @@ export async function destroy(req: Request, res: Response): Promise<void> {
       where: { id: { in: ids } },
       select: { id: true },
     });
-    const existingIds = new Set(existing.map((row) => row.id));
+    const existingIds = new Set(existing.map((row: { id: number }) => row.id));
     const nonExisting = ids.filter((id) => !existingIds.has(id));
 
     if (nonExisting.length > 0) {
